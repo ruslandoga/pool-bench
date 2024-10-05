@@ -47,19 +47,17 @@ defmodule Naive do
   end
 
   @impl true
-  def handle_call(:out, {_caller, _tag} = from, state) do
+  def handle_call(:out, {caller, _tag} = from, state) do
     %{queue: queue, monitors: monitors, resources: resources} = state
 
     case resources do
       [resource | resources] ->
-        # monitor = Process.monitor(caller)
-        monitor = make_ref()
+        monitor = Process.monitor(caller)
         monitors = Map.put(monitors, monitor, resource)
         {:reply, {resource, monitor}, %{state | monitors: monitors, resources: resources}}
 
       [] ->
-        # monitor = Process.monitor(caller)
-        monitor = make_ref()
+        monitor = Process.monitor(caller)
         # TODO drop from queue if gets big?
         queue = :queue.in({from, monitor}, queue)
         monitors = Map.put(monitors, monitor, from)
@@ -71,7 +69,7 @@ defmodule Naive do
   def handle_cast({:in, monitor}, state) do
     %{queue: queue, monitors: monitors, resources: resources} = state
     {resource, monitors} = Map.pop!(monitors, monitor)
-    # Process.demonitor(monitor, [:flush])
+    Process.demonitor(monitor, [:flush])
 
     case :queue.out(queue) do
       {{:value, {from, monitor}}, queue} ->
