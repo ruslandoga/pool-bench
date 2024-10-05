@@ -14,14 +14,15 @@ defmodule Bench.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger, :tools]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:benchee, "~> 1.3", only: :bench}
+      {:benchee, "~> 1.3", only: :bench},
+      {:xqlite, github: "ruslandoga/xqlite"}
     ]
   end
 end
