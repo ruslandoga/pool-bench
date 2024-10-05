@@ -3,7 +3,7 @@ schedulers = IO.inspect(:erlang.system_info(:schedulers), label: "Schedulers")
 {:ok, naive} =
   GenServer.start_link(
     Naive,
-    Enum.map(1..schedulers, fn _ ->
+    Enum.map(1..2, fn _ ->
       XQLite.open(":memory:", [:readonly, :nomutex])
     end),
     name: Naive
@@ -28,7 +28,8 @@ Benchee.run(
     "100 rows" => 100
   },
   time: 2,
-  parallel: 100
+  parallel: 2
+  # profile_after: true
 )
 
 :eprof.stop_profiling()
