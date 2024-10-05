@@ -12,7 +12,7 @@ defmodule Naive do
             stmt
 
           [] ->
-            stmt = XQLite.prepare(db, sql)
+            stmt = XQLite.prepare(db, sql, [:persistent])
             :ets.insert(stmts, {sql, stmt})
             stmt
         end
